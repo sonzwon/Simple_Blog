@@ -21,6 +21,22 @@ else:
     f = open(file_path, "w", encoding="utf8", newline="")
     f.close()
 
+
+# 게시글 작성
+def write_post():
+    """게시글 작성 함수"""
+    print("\n\n[[ 게시글 작성 ]]\n")
+    title = input("제목 : ")
+    content = input("내용 : ")
+    # 글 번호
+    id = post_list[-1].get_id() + 1
+    post = Post(id, title, content)
+    post_list.append(post)
+    save_post()
+    print("\n## 작성이 완료되었습니다")
+
+
+
 # 게시글 목록
 id_list = []
 def list_post():
@@ -34,41 +50,44 @@ def list_post():
         id_list.append(post.get_id())
     
     while True:
-        print(">>> 게시글 번호를 선택해주세요")
+        print("\n원하시는 게시글 번호를 선택해주세요")
         try:
-            id = int(input("글 번호 : "))
+            id = int(input(">>>"))
             if id in id_list:
-                print(f"\n\n>>> {id}번 게시글")
                 detail_post(id)
                 break
             elif id == -1:
                 break
             else:
-                print("없는 글 번호 입니다!")
+                print("\n없는 글 번호 입니다")
         except ValueError:
-            print("숫자를 입력해주세요!")
+            print("\n숫자를 입력해주세요")
+
 
 # 게시글 상세보기
 def detail_post(id):
     """게시글 상세보기 함수"""
-    print("\n[[ 상세보기 ]]")
+    print("\n\n[[ 게시글 상세 ]]")
     for post in post_list:
         if post.get_id() == id:
             post.add_view_count()
-            print(f"No. : {post.get_id()}")
+            print(f"No. {post.get_id()}")
             print(f"제목 : {post.get_title()}")
             print(f"내용 : {post.get_content()}")
             print(f"조회수 : {post.get_view_count()}")
+            target_post = post
     
     while True:
-        print("\n수정하려면 1, 삭제하려면 2를 눌러주세요")
+        print("------Press------")
+        print("수정 : 1\n삭제 : 2\n뒤로가기 : -1")
+        print("-----------------")
         try:
             choice = int(input(">>>"))
             if choice == 1:
-                print("수정")
+                update_post(target_post)
                 break
             elif choice == 2:
-                print("삭제되었습니다")
+                delete_post(target_post)
                 break
             elif choice == -1:
                 break
@@ -77,17 +96,34 @@ def detail_post(id):
         except ValueError:
             print("숫자를 입력해주세요")
 
-# 게시글 작성
-def write_post():
-    """게시글 작성 함수"""
-    print("\n\n[[ 게시글 작성 ]]")
+
+# 게시글 수정
+def update_post(target_post):
+    """게시글 수정 함수"""
+    print("\n\n[[ 게시글 수정 ]]")
     title = input("제목 : ")
     content = input("내용 : ")
-    # 글 번호
-    id = post_list[-1].get_id() + 1
-    post = Post(id, title, content)
-    post_list.append(post)
-    print("\n 게시글 등록 완료")
+    post = target_post.set_post(target_post.id, title, content, target_post.view_count)
+    print("\n## 수정이 완료되었습니다")
+
+
+# 게시글 삭제
+def delete_post(target_post):
+    """게시글 삭제 함수"""
+    post_list.remove(target_post)
+    print("\n## 삭제가 완료되었습니다")
+    
+
+# 게시글 저장
+def save_post():
+    """게시글 저장 함수"""
+    f = open(file_path, "w", encoding="utf8", newline="")
+    writer = csv.writer(f)
+    for post in post_list:
+        row = [post.get_id(), post.get_title(), post.get_content(), post.get_view_count()]
+        writer.writerow(row)
+    f.close()
+    print("\n## 저장이 완료되었습니다")
 
 # 메뉴 출력
 while True:
@@ -106,5 +142,6 @@ while True:
         elif choice == 2:
             list_post()
         elif choice == 3:
+            save_post()
             print("프로그램 종료")
             break
