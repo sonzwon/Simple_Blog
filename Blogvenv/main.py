@@ -78,7 +78,7 @@ def detail_post(id):
             target_post = post
     
     while True:
-        print("------Press------")
+        print("\n------Press------")
         print("수정 : 1\n삭제 : 2\n뒤로가기 : -1")
         print("-----------------")
         try:
@@ -104,6 +104,7 @@ def update_post(target_post):
     title = input("제목 : ")
     content = input("내용 : ")
     post = target_post.set_post(target_post.id, title, content, target_post.view_count)
+    save_post()
     print("\n## 수정이 완료되었습니다")
 
 
@@ -123,7 +124,7 @@ def save_post():
         row = [post.get_id(), post.get_title(), post.get_content(), post.get_view_count()]
         writer.writerow(row)
     f.close()
-    print("\n## 저장이 완료되었습니다")
+    print("\n## 파일 저장 완료")
 
 # 메뉴 출력
 while True:
@@ -142,6 +143,5 @@ while True:
         elif choice == 2:
             list_post()
         elif choice == 3:
-            save_post()
             print("프로그램 종료")
             break
